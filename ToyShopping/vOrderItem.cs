@@ -19,5 +19,6 @@ namespace ToyShopping
         public int Quantity { get; set; }
         public int TotalPrice { get; set; }
         public int OrderValue { get; set; }
+        public int CustomerId { get; set; }
     }
 }
