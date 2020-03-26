@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 
-namespace ToyShopping
+namespace ToyApplication
 {
     class Program
     {
@@ -217,7 +217,7 @@ namespace ToyShopping
 
             do
             {
-                Console.WriteLine(" 1.Place Order 2.View Order Details 3. Exit");
+                Console.WriteLine(" 1.Place Order 2.View Order Details 3.View Shipping Details 4.Exit");
                 Console.WriteLine("Enter your choice");
                 choice = Convert.ToInt32(Console.ReadLine());
                 switch (choice)
@@ -229,6 +229,9 @@ namespace ToyShopping
                         ViewOrder();
                         break;
                     case 3:
+                        ShippingDetail();
+                        break;
+                    case 4:
                         Console.WriteLine("Exit");
                         break;
                     default:
@@ -346,6 +349,7 @@ namespace ToyShopping
                     database.SaveChanges();
 
                     Console.WriteLine("Added to your order list");
+                    ShippingDetail();
                 }
 
                 else
@@ -355,6 +359,29 @@ namespace ToyShopping
                     AddCustomer();
                 }
 
+            }
+        }
+
+        public void ShippingDetail()
+        {
+            using (var database = new CompanyEntities())
+            {
+
+                var shippingDetail = database.ShippingDetails;
+                int customerId;
+                var customer = new Customer();
+                Console.WriteLine("Enter your Name:" + customer.Name);
+                customer.Name = Console.ReadLine();
+
+                var name = database.Customers.SingleOrDefault<Customer>(t => t.Name == customer.Name);
+                customerId = name.CustomerId;
+                Console.WriteLine("Select your shipping detail:");
+                {
+                    foreach (var sd in shippingDetail)
+                    {
+                        Console.WriteLine($"{sd.Address} - {sd.City} - {sd.State} - {sd.Country}");
+                    }
+                }
             }
         }
 
