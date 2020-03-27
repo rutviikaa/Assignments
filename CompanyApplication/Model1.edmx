@@ -1,0 +1,492 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="CompanyDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BusinessUnits">
+          <Key>
+            <PropertyRef Name="BusinessUnitId" />
+          </Key>
+          <Property Name="BusinessUnitId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BusinessUnitName" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Employees">
+          <Key>
+            <PropertyRef Name="EmployeeId" />
+          </Key>
+          <Property Name="EmployeeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="BusinessUnitId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Project_Employees">
+          <Key>
+            <PropertyRef Name="ProjectEmployeeId" />
+          </Key>
+          <Property Name="ProjectEmployeeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectId" Type="int" Nullable="false" />
+          <Property Name="EmployeeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProjectManagers">
+          <Key>
+            <PropertyRef Name="ProjectManagerId" />
+          </Key>
+          <Property Name="ProjectManagerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectEmployeeId" Type="int" Nullable="false" />
+          <Property Name="ProjectId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Projects">
+          <Key>
+            <PropertyRef Name="ProjectId" />
+          </Key>
+          <Property Name="ProjectId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="BusinessUnitId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'CompanyDb.dbo.vEmployees' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vEmployees">
+          <Key>
+            <PropertyRef Name="EmployeeName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="BusinessUnitName" />
+          </Key>
+          <Property Name="EmployeeName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="BusinessUnitName" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'CompanyDb.dbo.vProjectManagers' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vProjectManagers">
+          <Key>
+            <PropertyRef Name="EmployeeName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="BusinessUnitName" />
+          </Key>
+          <Property Name="EmployeeName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="BusinessUnitName" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Employees_BusinessUnits">
+          <End Role="BusinessUnits" Type="Self.BusinessUnits" Multiplicity="1" />
+          <End Role="Employees" Type="Self.Employees" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BusinessUnits">
+              <PropertyRef Name="BusinessUnitId" />
+            </Principal>
+            <Dependent Role="Employees">
+              <PropertyRef Name="BusinessUnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Employees_Employees">
+          <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
+          <End Role="Project_Employees" Type="Self.Project_Employees" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employees">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="Project_Employees">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Employees_Projects">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="Project_Employees" Type="Self.Project_Employees" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="Project_Employees">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectManagers_Project_Employees">
+          <End Role="Project_Employees" Type="Self.Project_Employees" Multiplicity="1" />
+          <End Role="ProjectManagers" Type="Self.ProjectManagers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project_Employees">
+              <PropertyRef Name="ProjectEmployeeId" />
+            </Principal>
+            <Dependent Role="ProjectManagers">
+              <PropertyRef Name="ProjectEmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectManagers_Projects">
+          <End Role="Projects" Type="Self.Projects" Multiplicity="1" />
+          <End Role="ProjectManagers" Type="Self.ProjectManagers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="ProjectManagers">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Projects_BusinessUnits">
+          <End Role="BusinessUnits" Type="Self.BusinessUnits" Multiplicity="1" />
+          <End Role="Projects" Type="Self.Projects" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BusinessUnits">
+              <PropertyRef Name="BusinessUnitId" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="BusinessUnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CompanyDbModelStoreContainer">
+          <EntitySet Name="BusinessUnits" EntityType="Self.BusinessUnits" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project_Employees" EntityType="Self.Project_Employees" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProjectManagers" EntityType="Self.ProjectManagers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vEmployees" EntityType="Self.vEmployees" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vEmployees].[EmployeeName] AS [EmployeeName], 
+    [vEmployees].[ProjectName] AS [ProjectName], 
+    [vEmployees].[BusinessUnitName] AS [BusinessUnitName]
+    FROM [dbo].[vEmployees] AS [vEmployees]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vProjectManagers" EntityType="Self.vProjectManagers" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vProjectManagers].[EmployeeName] AS [EmployeeName], 
+    [vProjectManagers].[ProjectName] AS [ProjectName], 
+    [vProjectManagers].[BusinessUnitName] AS [BusinessUnitName]
+    FROM [dbo].[vProjectManagers] AS [vProjectManagers]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Employees_BusinessUnits" Association="Self.FK_Employees_BusinessUnits">
+            <End Role="BusinessUnits" EntitySet="BusinessUnits" />
+            <End Role="Employees" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Employees_Employees" Association="Self.FK_Project_Employees_Employees">
+            <End Role="Employees" EntitySet="Employees" />
+            <End Role="Project_Employees" EntitySet="Project_Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Employees_Projects" Association="Self.FK_Project_Employees_Projects">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Project_Employees" EntitySet="Project_Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProjectManagers_Project_Employees" Association="Self.FK_ProjectManagers_Project_Employees">
+            <End Role="Project_Employees" EntitySet="Project_Employees" />
+            <End Role="ProjectManagers" EntitySet="ProjectManagers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProjectManagers_Projects" Association="Self.FK_ProjectManagers_Projects">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ProjectManagers" EntitySet="ProjectManagers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Projects_BusinessUnits" Association="Self.FK_Projects_BusinessUnits">
+            <End Role="BusinessUnits" EntitySet="BusinessUnits" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="CompanyDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BusinessUnit">
+          <Key>
+            <PropertyRef Name="BusinessUnitId" />
+          </Key>
+          <Property Name="BusinessUnitId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BusinessUnitName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Employees" Relationship="Self.FK_Employees_BusinessUnits" FromRole="BusinessUnits" ToRole="Employees" />
+          <NavigationProperty Name="Projects" Relationship="Self.FK_Projects_BusinessUnits" FromRole="BusinessUnits" ToRole="Projects" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="EmployeeId" />
+          </Key>
+          <Property Name="EmployeeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BusinessUnitId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="BusinessUnit" Relationship="Self.FK_Employees_BusinessUnits" FromRole="Employees" ToRole="BusinessUnits" />
+          <NavigationProperty Name="Project_Employees" Relationship="Self.FK_Project_Employees_Employees" FromRole="Employees" ToRole="Project_Employees" />
+        </EntityType>
+        <EntityType Name="Project_Employees">
+          <Key>
+            <PropertyRef Name="ProjectEmployeeId" />
+          </Key>
+          <Property Name="ProjectEmployeeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectId" Type="Int32" Nullable="false" />
+          <Property Name="EmployeeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Employee" Relationship="Self.FK_Project_Employees_Employees" FromRole="Project_Employees" ToRole="Employees" />
+          <NavigationProperty Name="Project" Relationship="Self.FK_Project_Employees_Projects" FromRole="Project_Employees" ToRole="Projects" />
+          <NavigationProperty Name="ProjectManagers" Relationship="Self.FK_ProjectManagers_Project_Employees" FromRole="Project_Employees" ToRole="ProjectManagers" />
+        </EntityType>
+        <EntityType Name="ProjectManager">
+          <Key>
+            <PropertyRef Name="ProjectManagerId" />
+          </Key>
+          <Property Name="ProjectManagerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectEmployeeId" Type="Int32" Nullable="false" />
+          <Property Name="ProjectId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Project_Employees" Relationship="Self.FK_ProjectManagers_Project_Employees" FromRole="ProjectManagers" ToRole="Project_Employees" />
+          <NavigationProperty Name="Project" Relationship="Self.FK_ProjectManagers_Projects" FromRole="ProjectManagers" ToRole="Projects" />
+        </EntityType>
+        <EntityType Name="Project">
+          <Key>
+            <PropertyRef Name="ProjectId" />
+          </Key>
+          <Property Name="ProjectId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BusinessUnitId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="BusinessUnit" Relationship="Self.FK_Projects_BusinessUnits" FromRole="Projects" ToRole="BusinessUnits" />
+          <NavigationProperty Name="Project_Employees" Relationship="Self.FK_Project_Employees_Projects" FromRole="Projects" ToRole="Project_Employees" />
+          <NavigationProperty Name="ProjectManagers" Relationship="Self.FK_ProjectManagers_Projects" FromRole="Projects" ToRole="ProjectManagers" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="vEmployee">
+          <Key>
+            <PropertyRef Name="EmployeeName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="BusinessUnitName" />
+          </Key>
+          <Property Name="EmployeeName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BusinessUnitName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="vProjectManager">
+          <Key>
+            <PropertyRef Name="EmployeeName" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="BusinessUnitName" />
+          </Key>
+          <Property Name="EmployeeName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ProjectName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BusinessUnitName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Employees_BusinessUnits">
+          <End Role="BusinessUnits" Type="Self.BusinessUnit" Multiplicity="1" />
+          <End Role="Employees" Type="Self.Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BusinessUnits">
+              <PropertyRef Name="BusinessUnitId" />
+            </Principal>
+            <Dependent Role="Employees">
+              <PropertyRef Name="BusinessUnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Projects_BusinessUnits">
+          <End Role="BusinessUnits" Type="Self.BusinessUnit" Multiplicity="1" />
+          <End Role="Projects" Type="Self.Project" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BusinessUnits">
+              <PropertyRef Name="BusinessUnitId" />
+            </Principal>
+            <Dependent Role="Projects">
+              <PropertyRef Name="BusinessUnitId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Employees_Employees">
+          <End Role="Employees" Type="Self.Employee" Multiplicity="1" />
+          <End Role="Project_Employees" Type="Self.Project_Employees" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employees">
+              <PropertyRef Name="EmployeeId" />
+            </Principal>
+            <Dependent Role="Project_Employees">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Project_Employees_Projects">
+          <End Role="Projects" Type="Self.Project" Multiplicity="1" />
+          <End Role="Project_Employees" Type="Self.Project_Employees" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="Project_Employees">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectManagers_Project_Employees">
+          <End Role="Project_Employees" Type="Self.Project_Employees" Multiplicity="1" />
+          <End Role="ProjectManagers" Type="Self.ProjectManager" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Project_Employees">
+              <PropertyRef Name="ProjectEmployeeId" />
+            </Principal>
+            <Dependent Role="ProjectManagers">
+              <PropertyRef Name="ProjectEmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProjectManagers_Projects">
+          <End Role="Projects" Type="Self.Project" Multiplicity="1" />
+          <End Role="ProjectManagers" Type="Self.ProjectManager" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Projects">
+              <PropertyRef Name="ProjectId" />
+            </Principal>
+            <Dependent Role="ProjectManagers">
+              <PropertyRef Name="ProjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CompanyDbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BusinessUnits" EntityType="Self.BusinessUnit" />
+          <EntitySet Name="Employees" EntityType="Self.Employee" />
+          <EntitySet Name="Project_Employees" EntityType="Self.Project_Employees" />
+          <EntitySet Name="ProjectManagers" EntityType="Self.ProjectManager" />
+          <EntitySet Name="Projects" EntityType="Self.Project" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <EntitySet Name="vEmployees" EntityType="Self.vEmployee" />
+          <EntitySet Name="vProjectManagers" EntityType="Self.vProjectManager" />
+          <AssociationSet Name="FK_Employees_BusinessUnits" Association="Self.FK_Employees_BusinessUnits">
+            <End Role="BusinessUnits" EntitySet="BusinessUnits" />
+            <End Role="Employees" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Projects_BusinessUnits" Association="Self.FK_Projects_BusinessUnits">
+            <End Role="BusinessUnits" EntitySet="BusinessUnits" />
+            <End Role="Projects" EntitySet="Projects" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Employees_Employees" Association="Self.FK_Project_Employees_Employees">
+            <End Role="Employees" EntitySet="Employees" />
+            <End Role="Project_Employees" EntitySet="Project_Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Project_Employees_Projects" Association="Self.FK_Project_Employees_Projects">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="Project_Employees" EntitySet="Project_Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProjectManagers_Project_Employees" Association="Self.FK_ProjectManagers_Project_Employees">
+            <End Role="Project_Employees" EntitySet="Project_Employees" />
+            <End Role="ProjectManagers" EntitySet="ProjectManagers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProjectManagers_Projects" Association="Self.FK_ProjectManagers_Projects">
+            <End Role="Projects" EntitySet="Projects" />
+            <End Role="ProjectManagers" EntitySet="ProjectManagers" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="CompanyDbModelStoreContainer" CdmEntityContainer="CompanyDbEntities">
+          <EntitySetMapping Name="BusinessUnits">
+            <EntityTypeMapping TypeName="CompanyDbModel.BusinessUnit">
+              <MappingFragment StoreEntitySet="BusinessUnits">
+                <ScalarProperty Name="BusinessUnitId" ColumnName="BusinessUnitId" />
+                <ScalarProperty Name="BusinessUnitName" ColumnName="BusinessUnitName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="CompanyDbModel.Employee">
+              <MappingFragment StoreEntitySet="Employees">
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+                <ScalarProperty Name="BusinessUnitId" ColumnName="BusinessUnitId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Project_Employees">
+            <EntityTypeMapping TypeName="CompanyDbModel.Project_Employees">
+              <MappingFragment StoreEntitySet="Project_Employees">
+                <ScalarProperty Name="ProjectEmployeeId" ColumnName="ProjectEmployeeId" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProjectManagers">
+            <EntityTypeMapping TypeName="CompanyDbModel.ProjectManager">
+              <MappingFragment StoreEntitySet="ProjectManagers">
+                <ScalarProperty Name="ProjectManagerId" ColumnName="ProjectManagerId" />
+                <ScalarProperty Name="ProjectEmployeeId" ColumnName="ProjectEmployeeId" />
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="CompanyDbModel.Project">
+              <MappingFragment StoreEntitySet="Projects">
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="BusinessUnitId" ColumnName="BusinessUnitId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="CompanyDbModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vEmployees">
+            <EntityTypeMapping TypeName="CompanyDbModel.vEmployee">
+              <MappingFragment StoreEntitySet="vEmployees">
+                <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="BusinessUnitName" ColumnName="BusinessUnitName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vProjectManagers">
+            <EntityTypeMapping TypeName="CompanyDbModel.vProjectManager">
+              <MappingFragment StoreEntitySet="vProjectManagers">
+                <ScalarProperty Name="EmployeeName" ColumnName="EmployeeName" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="BusinessUnitName" ColumnName="BusinessUnitName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
