@@ -375,13 +375,25 @@ namespace ToyApplication
 
                 var name = database.Customers.SingleOrDefault<Customer>(t => t.Name == customer.Name);
                 customerId = name.CustomerId;
-                Console.WriteLine("Select your shipping detail:");
+
+                if (name != null)
                 {
-                    foreach (var sd in shippingDetail)
+                    var shippinglist = database.ShippingDetails.ToList().Where(t=>t.CustomerId == name.CustomerId);
+                    Console.WriteLine("Select your shipping detail:");
                     {
-                        Console.WriteLine($"{sd.Address} - {sd.City} - {sd.State} - {sd.Country}");
+                        foreach (var sd in shippinglist)
+                        {
+                            Console.WriteLine($"{sd.Address} - {sd.City} - {sd.State} - {sd.Country}");
+                        }
                     }
                 }
+                else
+                {
+                    Console.WriteLine("You are not registered");
+                    Console.WriteLine("Please register yourself");
+                    AddCustomer();
+                }
+
             }
         }
 
@@ -389,17 +401,19 @@ namespace ToyApplication
         {
             using (var database = new CompanyEntities())
             {
+                int customerId;
                 var customer = new Customer();
                 Console.WriteLine("Enter your Name:" + customer.Name);
                 customer.Name = Console.ReadLine();
                 var name = database.Customers.SingleOrDefault<Customer>(t => t.Name == customer.Name);
-
+                customerId = name.CustomerId;
+                
                 if (name != null)
                 {
-                    var orders = database.vOrderItems;
+                    var orderlist = database.vOrderItems.ToList().Where(t=>t.CustomerId == name.CustomerId);
                     {
                         Console.WriteLine("Your Orders");
-                        foreach (var order in orders)
+                        foreach (var order in orderlist)
                         {
                             Console.WriteLine($"{order.ToyName} - {order.Price} - {order.Quantity} - {order.TotalPrice} - {order.OrderValue}");
                         }
