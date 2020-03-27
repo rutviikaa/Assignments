@@ -44,14 +44,23 @@ namespace CompanyApplication
             Name = Console.ReadLine();
             Console.WriteLine("Enter Password: ");
             Password = Console.ReadLine();
-            if (Name=="admin" && Password=="123456")
+            if (Name == "admin" && Password == "123456")
             {
                 do
                 {
                     Console.WriteLine("Select From Following Options");
-                    Console.WriteLine("1.Add Business Unit 2.Add Project 3.Assign Project to employees 4.Assign Project Manger 5.Remove Business Unit 6.Remove Project 7.Remove Employee from Project 8.Remove Project Manager 9.Exit");
+                    Console.WriteLine("1.Add Business Unit");
+                    Console.WriteLine("2.Add Project");
+                    Console.WriteLine("3.Assign Project to employees");
+                    Console.WriteLine("4.Assign Project Manger");
+                    Console.WriteLine("5.View Projects with Manager");
+                    Console.WriteLine("6.Remove Business Unit");
+                    Console.WriteLine("7.Remove Project");
+                    Console.WriteLine("8.Remove Employee from Project");
+                    Console.WriteLine("9.Remove Project Manager");
+                    Console.WriteLine("10.Exit");
                     choice = Convert.ToInt32(Console.ReadLine());
-                    switch(choice)
+                    switch (choice)
                     {
                         case 1:
                             AddBusinessUnit();
@@ -66,18 +75,21 @@ namespace CompanyApplication
                             AssignProjectManager();
                             break;
                         case 5:
-                            RemoveBusinessUnit();
+                            ViewProjectManager();
                             break;
                         case 6:
-                            RemoveProject();
+                            RemoveBusinessUnit();
                             break;
                         case 7:
-                            RemoveEmployeeFromProject();
+                            RemoveProject();
                             break;
                         case 8:
-                            RemoveProjectManager();
+                            RemoveEmployeeFromProject();
                             break;
                         case 9:
+                            RemoveProjectManager();
+                            break;
+                        case 10:
                             Console.WriteLine("Exit");
                             break;
                         default:
@@ -85,7 +97,7 @@ namespace CompanyApplication
                             break;
                     }
                 }
-                while (choice !=9);
+                while (choice != 10);
             }
             else
             {
@@ -99,7 +111,7 @@ namespace CompanyApplication
             {
                 var businessunit = new BusinessUnit();
 
-                Console.WriteLine("Enter Business Unit Name: " +businessunit.BusinessUnitName);
+                Console.WriteLine("Enter Business Unit Name: " + businessunit.BusinessUnitName);
                 businessunit.BusinessUnitName = Console.ReadLine();
 
                 var bu = db.BusinessUnits.SingleOrDefault(t => t.BusinessUnitName == businessunit.BusinessUnitName);
@@ -118,7 +130,7 @@ namespace CompanyApplication
 
         public void AddProject()
         {
-            using(var db = new CompanyDbEntities())
+            using (var db = new CompanyDbEntities())
             {
                 var project = new Project();
 
@@ -126,7 +138,7 @@ namespace CompanyApplication
                 project.ProjectName = Console.ReadLine();
 
                 var p = db.Projects.SingleOrDefault(t => t.ProjectName == project.ProjectName);
-                if (p!=null)
+                if (p != null)
                 {
                     Console.WriteLine("There is already such project present");
                 }
@@ -143,7 +155,7 @@ namespace CompanyApplication
                     project.BusinessUnitId = Convert.ToInt32(Console.ReadLine());
 
                     var bl = db.BusinessUnits.SingleOrDefault(t => t.BusinessUnitId == project.BusinessUnitId);
-                    if(bl == null)
+                    if (bl == null)
                     {
                         Console.WriteLine("There is no such business unit");
                         Console.WriteLine("Please Enter valid details");
@@ -173,7 +185,7 @@ namespace CompanyApplication
                 projectId = pn.ProjectId;
                 projemp.ProjectId = projectId;
 
-                if (pn!=null)
+                if (pn != null)
                 {
                     Console.WriteLine("Enter Employee Name:" + emp.EmployeeName);
                     emp.EmployeeName = Console.ReadLine();
@@ -182,7 +194,7 @@ namespace CompanyApplication
                     employeeId = en.EmployeeId;
                     projemp.EmployeeId = employeeId;
 
-                    if (en!=null)
+                    if (en != null)
                     {
                         db.Project_Employees.Add(projemp);
                         db.SaveChanges();
@@ -220,8 +232,8 @@ namespace CompanyApplication
                 var pn = db.Projects.SingleOrDefault(t => t.ProjectName == project.ProjectName);
                 projectId = pn.ProjectId;
                 projectmanager.ProjectId = projectId;
-                
-                if (pn!=null)
+
+                if (pn != null)
                 {
                     var emp = new Employee();
                     Console.WriteLine("Enter employee name: " + emp.EmployeeName);
@@ -230,11 +242,11 @@ namespace CompanyApplication
                     var en = db.Employees.SingleOrDefault(t => t.EmployeeName == emp.EmployeeName);
                     employeeId = en.EmployeeId;
 
-                    if(en!=null)
+                    if (en != null)
                     {
                         var e = db.Project_Employees.SingleOrDefault(t => t.EmployeeId == employeeId);
                         projectemployeeId = e.ProjectEmployeeId;
-                        if(e!=null)
+                        if (e != null)
                         {
                             projectmanager.ProjectEmployeeId = projectemployeeId;
                             db.ProjectManagers.Add(projectmanager);
@@ -259,18 +271,31 @@ namespace CompanyApplication
             }
         }
 
+        public void ViewProjectManager()
+        {
+            using (var db = new CompanyDbEntities())
+            {
+                var projectmanager = db.vProjectManagers;
+                Console.WriteLine("Detail of project with manager");
+                foreach (var list in projectmanager)
+                {
+                    Console.WriteLine($"Name- {list.EmployeeName}    Project Name - {list.ProjectName}    Business Unit - {list.BusinessUnitName}");
+                }
+            }
+        }
+
         public void RemoveBusinessUnit()
         {
             using (var db = new CompanyDbEntities())
             {
                 var businessunit = new BusinessUnit();
-                Console.WriteLine("Enter name of business unit you want to remove:"+ businessunit.BusinessUnitName);
+                Console.WriteLine("Enter name of business unit you want to remove:" + businessunit.BusinessUnitName);
                 businessunit.BusinessUnitName = Console.ReadLine();
 
                 var bu = db.BusinessUnits.SingleOrDefault(t => t.BusinessUnitName == businessunit.BusinessUnitName);
                 if (bu != null)
                 {
-                    db.BusinessUnits.Remove(db.BusinessUnits.Single(t=>t.BusinessUnitName ==businessunit.BusinessUnitName ));
+                    db.BusinessUnits.Remove(db.BusinessUnits.Single(t => t.BusinessUnitName == businessunit.BusinessUnitName));
                     db.SaveChanges();
                     Console.WriteLine("Business Unit Removed");
                 }
@@ -315,7 +340,7 @@ namespace CompanyApplication
 
                 var projemp = new Project_Employees();
                 var emp = new Employee();
-                    
+
                 Console.WriteLine("Enter Employee Name:" + emp.EmployeeName);
                 emp.EmployeeName = Console.ReadLine();
                 var en = db.Employees.SingleOrDefault(t => t.EmployeeName == emp.EmployeeName);
@@ -332,7 +357,7 @@ namespace CompanyApplication
                 {
                     Console.WriteLine("No project is assign to employee");
                 }
-  
+
             }
 
         }
@@ -344,7 +369,7 @@ namespace CompanyApplication
                 int projectId;
                 var projectmanager = new ProjectManager();
                 var project = new Project();
-               
+
                 Console.WriteLine("Enter Project Name: " + project.ProjectName);
                 project.ProjectName = Console.ReadLine();
 
@@ -353,9 +378,10 @@ namespace CompanyApplication
                 projectmanager.ProjectId = projectId;
 
                 if (pn != null)
-                {      db.ProjectManagers.Remove(projectmanager);
-                       db.SaveChanges();
-                       Console.WriteLine("Project manager is successfully removed");
+                {
+                    db.ProjectManagers.Remove(projectmanager);
+                    db.SaveChanges();
+                    Console.WriteLine("Project manager is successfully removed");
                 }
                 else
                 {
@@ -371,7 +397,9 @@ namespace CompanyApplication
             do
             {
                 Console.WriteLine("Select From Following Options");
-                Console.WriteLine("1. New Employee 2.Existing Employee 3.Exit");
+                Console.WriteLine("1. New Employee ");
+                Console.WriteLine("2.Existing Employee ");
+                Console.WriteLine("3.Exit");
                 choice = Convert.ToInt32(Console.ReadLine());
                 switch (choice)
                 {
@@ -443,15 +471,15 @@ namespace CompanyApplication
                 var name = db.Employees.SingleOrDefault(t => t.EmployeeName == employee.EmployeeName);
                 employeeId = employee.EmployeeId;
 
-                if (name!=null)
+                if (name != null)
                 {
-                    var employeedetails = db.vEmployees.Where(t=>t.EmployeeName == employee.EmployeeName );
+                    var employeedetails = db.vEmployees.Where(t => t.EmployeeName == employee.EmployeeName);
                     foreach (var list in employeedetails)
                     {
                         Console.WriteLine("Your Details are as follows:");
-                        Console.WriteLine($"Name- {list.EmployeeName} Project Name - {list.ProjectName} Business Unit - {list.BusinessUnitName}");
+                        Console.WriteLine($"Name- {list.EmployeeName}     Project Name - {list.ProjectName}     Business Unit - {list.BusinessUnitName}");
                     }
-                    
+
                 }
                 else
                 {
