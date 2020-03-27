@@ -320,7 +320,7 @@ namespace CompanyApplication
                 var p = db.Projects.SingleOrDefault(t => t.ProjectName == project.ProjectName);
                 if (p != null)
                 {
-                    db.Projects.Remove(project);
+                    db.Projects.Remove(db.Projects.Single(t => t.ProjectName == project.ProjectName));
                     db.SaveChanges();
                     Console.WriteLine("Project Unit Removed");
                 }
@@ -349,7 +349,7 @@ namespace CompanyApplication
 
                 if (en != null)
                 {
-                    db.Project_Employees.Remove(projemp);
+                    db.Project_Employees.Remove(db.Project_Employees.Single(t => t.EmployeeId == employeeId));
                     db.SaveChanges();
                     Console.WriteLine("Employee removed from assigned project");
                 }
@@ -379,7 +379,7 @@ namespace CompanyApplication
 
                 if (pn != null)
                 {
-                    db.ProjectManagers.Remove(projectmanager);
+                    db.ProjectManagers.Remove(db.ProjectManagers.Single(t => t.ProjectId == projectId));
                     db.SaveChanges();
                     Console.WriteLine("Project manager is successfully removed");
                 }
