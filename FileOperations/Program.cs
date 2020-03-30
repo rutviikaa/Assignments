@@ -72,16 +72,20 @@ namespace FileOperations
             {
                 Console.WriteLine("Enter file name - ");
                 string FileName = Console.ReadLine();
-                using (read = new StreamReader("E://" + FileName + ".txt"))
+                if (file.Exists)
                 {
-                    string ln;
-
-                    while ((ln = read.ReadLine()) != null)
+                    using (read = new StreamReader("E://" + FileName + ".txt"))
                     {
-                        Console.WriteLine(ln);
+                        string ln;
+
+                        while ((ln = read.ReadLine()) != null)
+                        {
+                            Console.WriteLine(ln);
+                        }
+                        read.Close();
                     }
-                    read.Close();
                 }
+                Console.WriteLine("There is no such file");
             }
             catch (Exception e)
             {
@@ -121,8 +125,12 @@ namespace FileOperations
                 Console.WriteLine("Enter the filename to which you want to copy the file");
                 string destFile = Console.ReadLine();
 
-                File.Copy("E://" + sourceFile + ".txt", "E://" + destFile + ".txt");
-                Console.WriteLine("File copied ");
+                if(sourceFile.Exists && destFile.Exists)
+                {
+                    File.Copy("E://" + sourceFile + ".txt", "E://" + destFile + ".txt");
+                    Console.WriteLine("File copied ");
+                }
+                Console.WriteLine("There is no such file");                              
             }
             catch (Exception e)
             {
@@ -143,21 +151,26 @@ namespace FileOperations
                 Console.WriteLine("Enter target filename");
                 string targetFile = Console.ReadLine();
 
-                using (write = new StreamWriter("E://" + targetFile + ".txt"))
+                if(sourceFiles[0].Exists && sourceFiles[1].Exists)
                 {
-                    for (int i = 0; i < sourceFiles.Length; i++)
+                    using (write = new StreamWriter("E://" + targetFile + ".txt"))
                     {
-                        using (read = new StreamReader("E://" + sourceFiles[i] + ".txt"))
+                        for (int i = 0; i < sourceFiles.Length; i++)
                         {
-                            string ln;
-
-                            while ((ln = read.ReadLine()) != null)
+                            using (read = new StreamReader("E://" + sourceFiles[i] + ".txt"))
                             {
-                                write.WriteLine(ln);
+                                string ln;
+
+                                while ((ln = read.ReadLine()) != null)
+                                {
+                                    write.WriteLine(ln);
+                                }
                             }
                         }
                     }
                 }
+                Console.WriteLine("There is no such file");
+                
             }
             catch (Exception e)
             {
